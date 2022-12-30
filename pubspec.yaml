@@ -1,0 +1,51 @@
+name: m7_livelyness_detection
+description: A new Flutter plugin project.
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+  flutter: ">=2.5.0"
+
+dependencies:
+  animate_do: ^3.0.2
+  camera: ^0.10.0+4
+  flutter:
+    sdk: flutter
+  google_mlkit_face_detection: ^0.5.0
+  lottie: ^2.1.0
+  plugin_platform_interface: ^2.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  # This section identifies this Flutter project as a plugin project.
+  # The 'pluginClass' specifies the class (in Java, Kotlin, Swift, Objective-C, etc.)
+  # which should be registered in the plugin registry. This is required for
+  # using method channels.
+  # The Android 'package' specifies package in which the registered class is.
+  # This is required for using method channels on Android.
+  # The 'ffiPlugin' specifies that native code should be built and bundled.
+  # This is required for using `dart:ffi`.
+  # All these are used by the tooling to maintain consistency when
+  # adding or updating assets for this project.
+  plugin:
+    platforms:
+      android:
+        package: com.example.m7_livelyness_detection
+        pluginClass: M7LivelynessDetectionPlugin
+      ios:
+        pluginClass: M7LivelynessDetectionPlugin
+
+  # To add assets to your plugin package, add an assets section, like this:
+  assets:
+    - packages/m7_livelyness_detection/src/assets/lottie/livelyness-start.json
+    - packages/m7_livelyness_detection/src/assets/lottie/livelyness-success.json
+    - packages/m7_livelyness_detection/src/assets/lottie/step_completed.json
