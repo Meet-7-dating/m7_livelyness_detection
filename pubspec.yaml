@@ -1,7 +1,9 @@
 name: m7_livelyness_detection
-description: A new Flutter plugin project.
-version: 0.0.1
-homepage:
+description: A single function package to detect weather the face visible in the camera is a live face or not.
+version: 0.0.2
+homepage: https://github.com/Meet-7-dating/m7_livelyness_detection
+repository: https://github.com/Meet-7-dating/m7_livelyness_detection/
+issue_tracker: https://github.com/Meet-7-dating/m7_livelyness_detection/issues
 
 environment:
   sdk: '>=2.18.6 <3.0.0'
