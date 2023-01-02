@@ -1,6 +1,7 @@
 import 'package:m7_livelyness_detection/index.dart';
 
 class M7DetectionConfig {
+
   /// Types of checks to be added while detecting the face.
   final List<M7LivelynessStepItem> steps;
 
