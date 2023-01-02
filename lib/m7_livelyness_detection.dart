@@ -12,7 +12,7 @@ class M7LivelynessDetection {
 
   //* MARK: - Public Methods
   //? =========================================================
-  
+
   /// A single line functoin to detect weather the face is live or not.
   /// Parameters: -
   /// * context: - Positional Parameter that will accept a `BuildContext` using which it will redirect the a new screen.

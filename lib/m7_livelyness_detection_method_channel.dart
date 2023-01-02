@@ -11,7 +11,8 @@ class MethodChannelM7LivelynessDetection extends M7LivelynessDetectionPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 }

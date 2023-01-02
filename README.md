@@ -89,7 +89,7 @@ Nothing fancy just a single line function that will return a temporary path to t
 
 #### Example Video
 
-![Livelyness Demo]({https://user-images.githubusercontent.com/106381741/210200724-ae4af9cc-ffeb-49e4-a3f9-9971b2f256b6.MP4} "Livelyness Demo")
+https://user-images.githubusercontent.com/106381741/210200724-ae4af9cc-ffeb-49e4-a3f9-9971b2f256b6.MP4
 
 ## Contributors
 

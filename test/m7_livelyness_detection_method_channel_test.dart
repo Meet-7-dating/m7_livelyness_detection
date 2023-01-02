@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:m7_livelyness_detection/m7_livelyness_detection_method_channel.dart';
 
 void main() {
-  MethodChannelM7LivelynessDetection platform = MethodChannelM7LivelynessDetection();
+  MethodChannelM7LivelynessDetection platform =
+      MethodChannelM7LivelynessDetection();
   const MethodChannel channel = MethodChannel('m7_livelyness_detection');
 
   TestWidgetsFlutterBinding.ensureInitialized();

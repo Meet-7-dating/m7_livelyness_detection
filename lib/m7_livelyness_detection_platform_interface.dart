@@ -8,7 +8,8 @@ abstract class M7LivelynessDetectionPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static M7LivelynessDetectionPlatform _instance = MethodChannelM7LivelynessDetection();
+  static M7LivelynessDetectionPlatform _instance =
+      MethodChannelM7LivelynessDetection();
 
   /// The default instance of [M7LivelynessDetectionPlatform] to use.
   ///
