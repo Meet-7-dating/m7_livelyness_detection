@@ -1,9 +1,9 @@
 # m7_livelyness_detection
 
-![](https://storage.googleapis.com/meet7_assets/meet7_app_icon.png)
+<img src="https://storage.googleapis.com/meet7_assets/meet7_app_icon.png" alt="drawing" width="190"/>
 
 ![](https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
-![](https://img.shields.io/badge/meet7-open--source-purple) ![](https://img.shields.io/pub/likes/m7_livelyness_detection) ![](https://img.shields.io/pub/points/m7_livelyness_detection) ![](https://img.shields.io/pub/popularity/m7_livelyness_detection)
+![](https://img.shields.io/badge/meet7-open--source-purple) ![](https://img.shields.io/pub/likes/m7_livelyness_detection) ![](https://img.shields.io/pub/points/m7_livelyness_detection) ![](https://img.shields.io/pub/popularity/m7_livelyness_detection) ![](https://img.shields.io/pub/publisher/m7_livelyness_detection) ![](https://img.shields.io/pub/v/m7_livelyness_detection?include_prereleases)
 
 
 
@@ -96,3 +96,4 @@ https://user-images.githubusercontent.com/106381741/210200724-ae4af9cc-ffeb-49e4
 | Contributors  |  |
 | ------------- | ------------- |
 | Sagar Ghag  | <a href="https://github.com/Meet-7-dating/m7_livelyness_detection/graphs/contributors"><img src="https://contrib.rocks/image?repo=Meet-7-dating/m7_livelyness_detection" /></a>  |
+| Omkar Tralsawala  | <a href="https://github.com/Meet-7-dating/m7_livelyness_detection/graphs/contributors"><img src="https://storage.googleapis.com/meet7_assets/archive/omkar-tralsawala-modified.png" width="65" height="65" /></a>  |
