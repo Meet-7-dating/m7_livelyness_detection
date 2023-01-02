@@ -1,3 +1,7 @@
+## 0.0.2+2
+
+* Updated the README.md with contributors
+
 ## 0.0.2+1
 
 * Added Demo video in the README.md file.
