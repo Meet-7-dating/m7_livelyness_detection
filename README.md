@@ -1,6 +1,6 @@
 # m7_livelyness_detection
 
-![](https://secureservercdn.net/160.153.137.91/nns.2aa.myftpupload.com/wp-content/uploads/thegem-logos/logo_02b434f906abd43095b870f23c028412_2x.png)
+![](https://storage.googleapis.com/meet7_assets/meet7_app_icon.png)
 
 ![](https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
 ![](https://img.shields.io/badge/meet7-open--source-purple) ![](https://img.shields.io/pub/likes/m7_livelyness_detection) ![](https://img.shields.io/pub/points/m7_livelyness_detection) ![](https://img.shields.io/pub/popularity/m7_livelyness_detection)
