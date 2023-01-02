@@ -21,11 +21,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: M7ExpampleScreen(),
-      // TestScreen(
-      //   config: M7DetectionConfig(
-      //     startWithInfoScreen: true,
-      //   ),
-      // ),
     );
   }
 }

@@ -12,17 +12,22 @@ class M7LivelynessDetection {
 
   //* MARK: - Public Methods
   //? =========================================================
+
+  /// A single line functoin to detect weather the face is live or not.
+  /// Parameters: -
+  /// * context: - Positional Parameter that will accept a `BuildContext` using which it will redirect the a new screen.
+  /// * config: - Accepts a `M7DetectionConfig` object which will hold all the setup config of the package.
   Future<String?> detectLivelyness(
     BuildContext context, {
     required M7DetectionConfig config,
   }) async {
-    final String? imgPath = await Navigator.of(context).push(
+    final String? capturedFacePath = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => M7LivelynessDetectionScreen(
           config: config,
         ),
       ),
     );
-    return imgPath;
+    return capturedFacePath;
   }
 }
