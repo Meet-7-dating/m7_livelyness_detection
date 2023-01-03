@@ -3,6 +3,7 @@ export 'dart:io';
 
 export 'package:animate_do/animate_do.dart';
 export 'package:camera/camera.dart';
+export 'package:equatable/equatable.dart';
 export 'package:flutter/foundation.dart';
 export 'package:flutter/material.dart';
 export 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
