@@ -12,10 +12,14 @@ class M7DetectionConfig {
   /// Default is *15*
   final int maxSecToDetect;
 
+  /// A boolean value that deinfes whether to allow the user to click the selfie even if the face is not detected.
+  final bool allowAfterMaxSec;
+
   M7DetectionConfig({
     required this.steps,
     this.startWithInfoScreen = false,
     this.maxSecToDetect = 15,
+    this.allowAfterMaxSec = false,
   }) {
     assert(
       steps.isNotEmpty,
