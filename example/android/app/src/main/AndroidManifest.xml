@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.m7_livelyness_detection_example">
+    package="com.m7.poc.m7_livelyness_detection_example">
    <application
         android:label="m7_livelyness_detection_example"
         android:name="${applicationName}"
