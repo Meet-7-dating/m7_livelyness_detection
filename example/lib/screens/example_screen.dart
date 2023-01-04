@@ -53,6 +53,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       ],
     );
     M7LivelynessDetection.instance.configure(
+      contourColor: Colors.white,
       thresholds: [
         M7SmileDetectionThreshold(
           probability: 0.8,
@@ -75,6 +76,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
         startWithInfoScreen: _startWithInfo,
         maxSecToDetect: _timeOutDuration == 100 ? 2500 : _timeOutDuration,
         allowAfterMaxSec: _allowAfterTimeOut,
+        captureButtonColor: Colors.red,
       ),
     );
     if (response == null) {

@@ -15,11 +15,15 @@ class M7DetectionConfig {
   /// A boolean value that deinfes whether to allow the user to click the selfie even if the face is not detected.
   final bool allowAfterMaxSec;
 
+  /// Icon color of the button that will come after the [maxSecToDetect] is completed.
+  final Color? captureButtonColor;
+
   M7DetectionConfig({
     required this.steps,
     this.startWithInfoScreen = false,
     this.maxSecToDetect = 15,
     this.allowAfterMaxSec = false,
+    this.captureButtonColor,
   }) {
     assert(
       steps.isNotEmpty,

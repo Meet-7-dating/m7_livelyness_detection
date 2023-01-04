@@ -89,6 +89,11 @@ class M7LivelynessDetectionStepOverlayState
     }
   }
 
+  void reset() {
+    _pageController.jumpToPage(0);
+    setState(() => _currentIndex = 0);
+  }
+
   //* MARK: - Private Methods for Business Logic
   //? =========================================================
   void _showLoader() => setState(
