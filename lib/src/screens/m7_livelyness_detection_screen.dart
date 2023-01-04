@@ -34,6 +34,7 @@ class _MLivelyness7DetectionScreenState
   bool _didCloseEyes = false;
   bool _isTakingPicture = false;
   Timer? _timerToDetectFace;
+  bool _isCaptureButtonVisible = false;
 
   late final List<M7LivelynessStepItem> _steps;
 
@@ -94,15 +95,23 @@ class _MLivelyness7DetectionScreenState
     if (!widget.config.startWithInfoScreen) {
       _startLiveFeed();
     }
-    _startTimer();
   }
 
   void _startTimer() {
     _timerToDetectFace = Timer(
       Duration(seconds: widget.config.maxSecToDetect),
-      () => _onDetectionCompleted(
-        imgToReturn: null,
-      ),
+      () {
+        _timerToDetectFace?.cancel();
+        _timerToDetectFace = null;
+        if (widget.config.allowAfterMaxSec) {
+          _isCaptureButtonVisible = true;
+          setState(() {});
+          return;
+        }
+        _onDetectionCompleted(
+          imgToReturn: null,
+        );
+      },
     );
   }
 
@@ -120,6 +129,7 @@ class _MLivelyness7DetectionScreenState
       }
       _cameraController?.startImageStream(_processCameraImage);
       if (mounted) {
+        _startTimer();
         setState(() {});
       }
     });
@@ -433,6 +443,31 @@ class _MLivelyness7DetectionScreenState
           key: _stepsKey,
           steps: _steps,
           onCompleted: () => _takePicture(),
+        ),
+        Visibility(
+          visible: _isCaptureButtonVisible,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Spacer(
+                flex: 20,
+              ),
+              MaterialButton(
+                onPressed: () => _takePicture(),
+                color: Colors.blue,
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(16),
+                shape: const CircleBorder(),
+                child: const Icon(
+                  Icons.camera_alt,
+                  size: 24,
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
       ],
     );

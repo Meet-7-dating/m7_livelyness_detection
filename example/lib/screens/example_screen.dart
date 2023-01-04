@@ -15,6 +15,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
   String? _capturedImagePath;
   final bool _isLoading = false;
   bool _startWithInfo = true;
+  bool _allowAfterTimeOut = false;
   final List<M7LivelynessStepItem> _veificationSteps = [];
   int _timeOutDuration = 30;
 
@@ -73,6 +74,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
         steps: _veificationSteps,
         startWithInfoScreen: _startWithInfo,
         maxSecToDetect: _timeOutDuration == 100 ? 2500 : _timeOutDuration,
+        allowAfterMaxSec: _allowAfterTimeOut,
       ),
     );
     if (response == null) {
@@ -250,6 +252,34 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
           ],
         ),
         const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Spacer(
+              flex: 3,
+            ),
+            const Text(
+              "Allow after timer is completed:",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            CupertinoSwitch(
+              value: _allowAfterTimeOut,
+              onChanged: (value) => setState(
+                () => _allowAfterTimeOut = value,
+              ),
+            ),
+            const Spacer(
+              flex: 3,
+            ),
+          ],
+        ),
+        const Spacer(),
         Text(
           "Detection Time-out Duration(In Seconds): ${_timeOutDuration == 100 ? "No Limit" : _timeOutDuration}",
           textAlign: TextAlign.center,
@@ -305,10 +335,6 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
               ],
             ),
           ),
-        ),
-        const Spacer(),
-        const Spacer(
-          flex: 6,
         ),
       ],
     );
