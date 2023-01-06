@@ -2,21 +2,35 @@
 
 <img src="https://storage.googleapis.com/meet7_assets/meet7_app_icon.png" alt="drawing" width="190"/>
 
-![](https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
-![](https://img.shields.io/badge/meet7-open--source-purple) ![](https://img.shields.io/pub/likes/m7_livelyness_detection) ![](https://img.shields.io/pub/points/m7_livelyness_detection) ![](https://img.shields.io/pub/popularity/m7_livelyness_detection) ![](https://img.shields.io/pub/publisher/m7_livelyness_detection) ![](https://img.shields.io/pub/v/m7_livelyness_detection?include_prereleases)
-
-
+![](https://img.shields.io/badge/meet7-open--source-purple?style=for-the-badge) ![](https://img.shields.io/pub/publisher/m7_livelyness_detection?color=purple&style=for-the-badge) ![](https://img.shields.io/github/issues-raw/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&&logo=github) ![](https://img.shields.io/github/languages/count/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&&logo=github)
+![](https://img.shields.io/pub/likes/m7_livelyness_detection?style=for-the-badge&logo=dart) ![](https://img.shields.io/pub/points/m7_livelyness_detection?style=for-the-badge&logo=dart) ![](https://img.shields.io/pub/popularity/m7_livelyness_detection?style=for-the-badge&logo=dart) ![](https://img.shields.io/pub/publisher/m7_livelyness_detection?style=for-the-badge) ![](https://img.shields.io/pub/v/m7_livelyness_detection?style=for-the-badge&logo=dart)
+![](https://img.shields.io/github/directory-file-count/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github) ![](https://img.shields.io/github/repo-size/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github) ![](https://img.shields.io/github/commit-activity/w/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github) ![](https://img.shields.io/github/contributors/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github)
 
 ## What is the Livelyness Detection?
-A single line flutter package that will help you detect weather the captured image is a live face or not.
+
+Liveness detection for face recognition in biometrics is a technique where an algorithm detects if the person in front of the camera is alive and real. The algorithm is able to recognize a live person from presentation attacks - where a bad actor, or fraud perpetrator, uses someone else's physical characteristics or biometric data (known as "spoofs") for impersonation.
+
+`Spoofing` attempts using printed photos, recordings, deep fake pictures, and 3D masks poses a serious threat. `Facial Liveness Detection` incorporates specialized features to identify biometric spoofing attacks, which could be an imitation emulating a person’s unique biometrics scanned through the biometric detector to deceive or bypass the identification and authentication steps provided by the system. Even though face recognition can reliably answer the question, “Is this the right person?” but not the question, “Is this a live person?” This is where liveness detection technology plays a significant role in fraud detection and mitigation. Face biometric matching must be able to detect spoofs in order to be trusted, and to maintain the integrity of biometric data. 
+
+<!-- <iframe src="https://embed.lottiefiles.com/animation/16432" width="100%" aspect-ratio="auto"></iframe> -->
+
+<iframe 
+  width="100%"
+  src="https://embed.lottiefiles.com/animation/16432"
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen>
+</iframe>
 
 ## Platform Support
 
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :----: |
-|   ✔️    | ✔️  |  ⏱️   | ⏱️  |  ⏱️   |   ⏱️   |
+| iOS | Android | MacOS | Web | Linux | Windows |
+| :-: | :----: | :---: | :-: | :---: | :----: |
+|   ✔️    | ✔️  |  <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>   | <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>  |  <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>   |   <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>   |
 
 ## Installation
+First, we have to install the package on flutter.
+
 
 #### Flutter Setup
 
@@ -28,6 +42,7 @@ flutter pub add m7_livelyness_detection
 ```
 
 #### Native Setup
+Next comes the native setup on both android and iOS
 
 <details>
   <summary>iOS</summary>
@@ -62,7 +77,7 @@ flutter pub add m7_livelyness_detection
 
 ## Example
 
-Nothing fancy just a single line function that will return a temporary path to the captured image.
+A call to a single line function will return a temporary path to the captured image.
 
 #### Code
 ```dart
@@ -90,6 +105,12 @@ Nothing fancy just a single line function that will return a temporary path to t
 #### Example Video
 
 https://user-images.githubusercontent.com/106381741/210200724-ae4af9cc-ffeb-49e4-a3f9-9971b2f256b6.MP4
+
+## Known Issues
+
+Here is a list of known issues in the package.
+
+* Face detection does not work on some of the android devices. The problem is still unknown and the issue is from the Google ML Kit. [Here is the link of the open issue](https://github.com/bharat-biradar/Google-Ml-Kit-plugin/issues/314).
 
 ## Contributors
 

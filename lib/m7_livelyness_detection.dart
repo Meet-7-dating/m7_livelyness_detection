@@ -10,6 +10,21 @@ class M7LivelynessDetection {
   static final M7LivelynessDetection instance =
       M7LivelynessDetection._privateConstructor();
 
+  //* MARK: - Private Variables
+  //? =========================================================
+  final List<M7DetectionThreshold> _thresholds = [];
+  Color? _contourDetectionColor;
+
+  //* MARK: - Public Variables
+  //? =========================================================
+  List<M7DetectionThreshold> get thresholdConfig {
+    return _thresholds;
+  }
+
+  Color? get contourDetectionColor {
+    return _contourDetectionColor;
+  }
+
   //* MARK: - Public Methods
   //? =========================================================
 
@@ -29,5 +44,22 @@ class M7LivelynessDetection {
       ),
     );
     return capturedFacePath;
+  }
+
+  /// Configures the shreshold values of which will be used while verfying
+  /// Parameters: -
+  /// * thresholds: - List of [M7DetectionThreshold] objects.
+  /// * contourColor - Color of the points that are plotted on the face while detecting.
+  void configure({
+    required List<M7DetectionThreshold> thresholds,
+    Color contourColor = const Color(0xffab48e0),
+  }) {
+    assert(
+      thresholds.isNotEmpty,
+      "Threshold configuration cannot be empty",
+    );
+    _thresholds.clear();
+    _thresholds.addAll(thresholds);
+    _contourDetectionColor = contourColor;
   }
 }

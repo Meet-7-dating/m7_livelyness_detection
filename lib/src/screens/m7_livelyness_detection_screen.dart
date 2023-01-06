@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:collection/collection.dart';
 import 'package:m7_livelyness_detection/index.dart';
 
 List<CameraDescription> availableCams = [];
@@ -33,6 +34,7 @@ class _MLivelyness7DetectionScreenState
   bool _didCloseEyes = false;
   bool _isTakingPicture = false;
   Timer? _timerToDetectFace;
+  bool _isCaptureButtonVisible = false;
 
   late final List<M7LivelynessStepItem> _steps;
 
@@ -93,15 +95,23 @@ class _MLivelyness7DetectionScreenState
     if (!widget.config.startWithInfoScreen) {
       _startLiveFeed();
     }
-    _startTimer();
   }
 
   void _startTimer() {
     _timerToDetectFace = Timer(
       Duration(seconds: widget.config.maxSecToDetect),
-      () => _onDetectionCompleted(
-        imgToReturn: null,
-      ),
+      () {
+        _timerToDetectFace?.cancel();
+        _timerToDetectFace = null;
+        if (widget.config.allowAfterMaxSec) {
+          _isCaptureButtonVisible = true;
+          setState(() {});
+          return;
+        }
+        _onDetectionCompleted(
+          imgToReturn: null,
+        );
+      },
     );
   }
 
@@ -118,7 +128,10 @@ class _MLivelyness7DetectionScreenState
         return;
       }
       _cameraController?.startImageStream(_processCameraImage);
-      setState(() {});
+      if (mounted) {
+        _startTimer();
+        setState(() {});
+      }
     });
   }
 
@@ -143,7 +156,6 @@ class _MLivelyness7DetectionScreenState
     final inputImageFormat = InputImageFormatValue.fromRawValue(
       cameraImage.format.raw,
     );
-    if (inputImageFormat == null) return;
 
     final planeData = cameraImage.planes.map(
       (Plane plane) {
@@ -158,7 +170,7 @@ class _MLivelyness7DetectionScreenState
     final inputImageData = InputImageData(
       size: imageSize,
       imageRotation: imageRotation,
-      inputImageFormat: inputImageFormat,
+      inputImageFormat: inputImageFormat ?? InputImageFormat.yuv_420_888,
       planeData: planeData,
     );
 
@@ -179,15 +191,16 @@ class _MLivelyness7DetectionScreenState
 
     if (inputImage.inputImageData?.size != null &&
         inputImage.inputImageData?.imageRotation != null) {
-      final painter = M7FaceDetectorPainter(
-        faces,
-        inputImage.inputImageData!.size,
-        inputImage.inputImageData!.imageRotation,
-      );
-      _customPaint = CustomPaint(painter: painter);
       if (faces.isEmpty) {
         _resetSteps();
       } else {
+        final firstFace = faces.first;
+        final painter = M7FaceDetectorPainter(
+          firstFace,
+          inputImage.inputImageData!.size,
+          inputImage.inputImageData!.imageRotation,
+        );
+        _customPaint = CustomPaint(painter: painter);
         if (_isProcessingStep &&
             _steps[_stepsKey.currentState?.currentIndex ?? 0].step ==
                 M7LivelynessStep.blink) {
@@ -224,7 +237,9 @@ class _MLivelyness7DetectionScreenState
     _steps[indexToUpdate] = _steps[indexToUpdate].copyWith(
       isCompleted: true,
     );
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     await _stepsKey.currentState?.nextPage();
     _stopProcessing();
   }
@@ -268,16 +283,28 @@ class _MLivelyness7DetectionScreenState
       );
     }
     _customPaint = null;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  void _startProcessing() => setState(
-        () => _isProcessingStep = true,
-      );
+  void _startProcessing() {
+    if (!mounted) {
+      return;
+    }
+    setState(
+      () => _isProcessingStep = true,
+    );
+  }
 
-  void _stopProcessing() => setState(
-        () => _isProcessingStep = false,
-      );
+  void _stopProcessing() {
+    if (!mounted) {
+      return;
+    }
+    setState(
+      () => _isProcessingStep = false,
+    );
+  }
 
   void _detect({
     required Face face,
@@ -288,28 +315,51 @@ class _MLivelyness7DetectionScreenState
     }
     switch (step) {
       case M7LivelynessStep.blink:
-        if ((face.leftEyeOpenProbability ?? 1.0) < 0.25 &&
-            (face.rightEyeOpenProbability ?? 1.0) < 0.25) {
+        final M7BlinkDetectionThreshold? blinkThreshold =
+            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+          (p0) => p0 is M7BlinkDetectionThreshold,
+        ) as M7BlinkDetectionThreshold?;
+        if ((face.leftEyeOpenProbability ?? 1.0) <
+                (blinkThreshold?.leftEyeProbability ?? 0.25) &&
+            (face.rightEyeOpenProbability ?? 1.0) <
+                (blinkThreshold?.rightEyeProbability ?? 0.25)) {
           _startProcessing();
-          setState(
-            () => _didCloseEyes = true,
-          );
+          if (mounted) {
+            setState(
+              () => _didCloseEyes = true,
+            );
+          }
         }
         break;
       case M7LivelynessStep.turnLeft:
-        if ((face.headEulerAngleY ?? 0) > 45) {
+        final M7HeadTurnDetectionThreshold? headTurnThreshold =
+            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+          (p0) => p0 is M7HeadTurnDetectionThreshold,
+        ) as M7HeadTurnDetectionThreshold?;
+        if ((face.headEulerAngleY ?? 0) >
+            (headTurnThreshold?.rotationAngle ?? 45)) {
           _startProcessing();
           await _completeStep(step: step);
         }
         break;
       case M7LivelynessStep.turnRight:
-        if ((face.headEulerAngleY ?? 0) > -50) {
+        final M7HeadTurnDetectionThreshold? headTurnThreshold =
+            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+          (p0) => p0 is M7HeadTurnDetectionThreshold,
+        ) as M7HeadTurnDetectionThreshold?;
+        if ((face.headEulerAngleY ?? 0) >
+            (headTurnThreshold?.rotationAngle ?? -50)) {
           _startProcessing();
           await _completeStep(step: step);
         }
         break;
       case M7LivelynessStep.smile:
-        if ((face.smilingProbability ?? 0) > 0.75) {
+        final M7SmileDetectionThreshold? smileThreshold =
+            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+          (p0) => p0 is M7SmileDetectionThreshold,
+        ) as M7SmileDetectionThreshold?;
+        if ((face.smilingProbability ?? 0) >
+            (smileThreshold?.probability ?? 0.75)) {
           _startProcessing();
           await _completeStep(step: step);
         }
@@ -326,9 +376,11 @@ class _MLivelyness7DetectionScreenState
             ? _buildDetectionBody()
             : M7LivelynessInfoWidget(
                 onStartTap: () {
-                  setState(
-                    () => _isInfoStepCompleted = true,
-                  );
+                  if (mounted) {
+                    setState(
+                      () => _isInfoStepCompleted = true,
+                    );
+                  }
                   _startLiveFeed();
                 },
               ),
@@ -391,6 +443,31 @@ class _MLivelyness7DetectionScreenState
           key: _stepsKey,
           steps: _steps,
           onCompleted: () => _takePicture(),
+        ),
+        Visibility(
+          visible: _isCaptureButtonVisible,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Spacer(
+                flex: 20,
+              ),
+              MaterialButton(
+                onPressed: () => _takePicture(),
+                color: Colors.blue,
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(16),
+                shape: const CircleBorder(),
+                child: const Icon(
+                  Icons.camera_alt,
+                  size: 24,
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
       ],
     );

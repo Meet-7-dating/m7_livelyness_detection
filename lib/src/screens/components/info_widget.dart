@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:m7_livelyness_detection/index.dart';
 
 class M7LivelynessInfoWidget extends StatefulWidget {
@@ -16,15 +15,6 @@ class _M7LivelynessInfoWidgetState extends State<M7LivelynessInfoWidget> {
   @override
   void initState() {
     super.initState();
-    try {
-      rootBundle.loadString(M7AssetConstants.lottie.livelynessStart).then(
-            (value) => print(
-              "Asset Value: $value",
-            ),
-          );
-    } catch (e) {
-      print(e);
-    }
   }
 
   @override

@@ -1,6 +1,6 @@
 name: m7_livelyness_detection
 description: A single function package to detect weather the face visible in the camera is a live face or not.
-version: 0.0.2+2
+version: 0.0.4
 homepage: https://github.com/Meet-7-dating/m7_livelyness_detection
 repository: https://github.com/Meet-7-dating/m7_livelyness_detection/
 issue_tracker: https://github.com/Meet-7-dating/m7_livelyness_detection/issues
@@ -11,10 +11,13 @@ environment:
 
 dependencies:
   animate_do: ^3.0.2
-  camera: ^0.10.0+4
+  camera: ^0.10.1
+  collection: ^1.16.0
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
   google_mlkit_face_detection: ^0.5.0
+  image: ^3.0.2
   lottie: ^2.1.0
   plugin_platform_interface: ^2.0.2
 
@@ -37,3 +40,4 @@ flutter:
     - packages/m7_livelyness_detection/src/assets/lottie/livelyness-start.json
     - packages/m7_livelyness_detection/src/assets/lottie/livelyness-success.json
     - packages/m7_livelyness_detection/src/assets/lottie/step_completed.json
+    - packages/m7_livelyness_detection/src/assets/final-mesh.png

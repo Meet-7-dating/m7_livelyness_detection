@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:m7_livelyness_detection_example/index.dart';
 
 class M7ExpampleScreen extends StatefulWidget {
@@ -12,9 +14,19 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
   //? =========================================================
   String? _capturedImagePath;
   final bool _isLoading = false;
+  bool _startWithInfo = true;
+  bool _allowAfterTimeOut = false;
+  final List<M7LivelynessStepItem> _veificationSteps = [];
+  int _timeOutDuration = 30;
 
   //* MARK: - Life Cycle Methods
   //? =========================================================
+  @override
+  void initState() {
+    _initValues();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,25 +37,44 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
 
   //* MARK: - Private Methods for Business Logic
   //? =========================================================
+  void _initValues() {
+    _veificationSteps.addAll(
+      [
+        M7LivelynessStepItem(
+          step: M7LivelynessStep.smile,
+          title: "Smile",
+          isCompleted: false,
+        ),
+        M7LivelynessStepItem(
+          step: M7LivelynessStep.blink,
+          title: "Blink",
+          isCompleted: false,
+        ),
+      ],
+    );
+    M7LivelynessDetection.instance.configure(
+      thresholds: [
+        M7SmileDetectionThreshold(
+          probability: 0.8,
+        ),
+        M7BlinkDetectionThreshold(
+          leftEyeProbability: 0.25,
+          rightEyeProbability: 0.25,
+        ),
+      ],
+    );
+  }
+
   void _onStartLivelyness() async {
     setState(() => _capturedImagePath = null);
     final String? response =
         await M7LivelynessDetection.instance.detectLivelyness(
       context,
       config: M7DetectionConfig(
-        steps: [
-          M7LivelynessStepItem(
-            step: M7LivelynessStep.blink,
-            title: "Blink",
-            isCompleted: false,
-          ),
-          M7LivelynessStepItem(
-            step: M7LivelynessStep.smile,
-            title: "Smile",
-            isCompleted: false,
-          ),
-        ],
-        startWithInfoScreen: true,
+        steps: _veificationSteps,
+        startWithInfoScreen: _startWithInfo,
+        maxSecToDetect: _timeOutDuration == 100 ? 2500 : _timeOutDuration,
+        allowAfterMaxSec: _allowAfterTimeOut,
       ),
     );
     if (response == null) {
@@ -52,6 +83,77 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
     setState(
       () => _capturedImagePath = response,
     );
+  }
+
+  String _getTitle(M7LivelynessStep step) {
+    switch (step) {
+      case M7LivelynessStep.blink:
+        return "Blink";
+      case M7LivelynessStep.turnLeft:
+        return "Turn Your Head Left";
+      case M7LivelynessStep.turnRight:
+        return "Turn Your Head Right";
+      case M7LivelynessStep.smile:
+        return "Smile";
+    }
+  }
+
+  String _getSubTitle(M7LivelynessStep step) {
+    switch (step) {
+      case M7LivelynessStep.blink:
+        return "Detects Blink on the face visible in camera";
+      case M7LivelynessStep.turnLeft:
+        return "Detects Left Turn of the on the face visible in camera";
+      case M7LivelynessStep.turnRight:
+        return "Detects Right Turn of the on the face visible in camera";
+      case M7LivelynessStep.smile:
+        return "Detects Smile on the face visible in camera";
+    }
+  }
+
+  bool _isSelected(M7LivelynessStep step) {
+    final M7LivelynessStepItem? doesExist = _veificationSteps.firstWhereOrNull(
+      (p0) => p0.step == step,
+    );
+    return doesExist != null;
+  }
+
+  void _onStepValChanged(M7LivelynessStep step, bool value) {
+    if (!value && _veificationSteps.length == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Need to have atleast 1 step of verification",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+          backgroundColor: Colors.red.shade900,
+        ),
+      );
+      return;
+    }
+    final M7LivelynessStepItem? doesExist = _veificationSteps.firstWhereOrNull(
+      (p0) => p0.step == step,
+    );
+
+    if (doesExist == null && value) {
+      _veificationSteps.add(
+        M7LivelynessStepItem(
+          step: step,
+          title: _getTitle(step),
+          isCompleted: false,
+        ),
+      );
+    } else {
+      if (!value) {
+        _veificationSteps.removeWhere(
+          (p0) => p0.step == step,
+        );
+      }
+    }
+    setState(() {});
   }
 
   //* MARK: - Private Methods for UI Components
@@ -121,8 +223,118 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
             ),
           ),
         ),
-        const Spacer(
-          flex: 6,
+        const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Spacer(
+              flex: 3,
+            ),
+            const Text(
+              "Start with info screen:",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            CupertinoSwitch(
+              value: _startWithInfo,
+              onChanged: (value) => setState(
+                () => _startWithInfo = value,
+              ),
+            ),
+            const Spacer(
+              flex: 3,
+            ),
+          ],
+        ),
+        const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Spacer(
+              flex: 3,
+            ),
+            const Text(
+              "Allow after timer is completed:",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            CupertinoSwitch(
+              value: _allowAfterTimeOut,
+              onChanged: (value) => setState(
+                () => _allowAfterTimeOut = value,
+              ),
+            ),
+            const Spacer(
+              flex: 3,
+            ),
+          ],
+        ),
+        const Spacer(),
+        Text(
+          "Detection Time-out Duration(In Seconds): ${_timeOutDuration == 100 ? "No Limit" : _timeOutDuration}",
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Slider(
+          min: 0,
+          max: 100,
+          value: _timeOutDuration.toDouble(),
+          onChanged: (value) => setState(
+            () => _timeOutDuration = value.toInt(),
+          ),
+        ),
+        Expanded(
+          flex: 14,
+          child: ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            itemCount: M7LivelynessStep.values.length,
+            itemBuilder: (context, index) => ExpansionTile(
+              title: Text(
+                _getTitle(
+                  M7LivelynessStep.values[index],
+                ),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              children: [
+                ListTile(
+                  title: Text(
+                    _getSubTitle(
+                      M7LivelynessStep.values[index],
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  trailing: CupertinoSwitch(
+                    value: _isSelected(
+                      M7LivelynessStep.values[index],
+                    ),
+                    onChanged: (value) => _onStepValChanged(
+                      M7LivelynessStep.values[index],
+                      value,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
