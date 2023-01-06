@@ -1,4 +1,4 @@
-extension M7IntExtension on int {
+extension M7LDIntExtension on int {
   bool get isEven {
     return this % 2 == 0;
   }

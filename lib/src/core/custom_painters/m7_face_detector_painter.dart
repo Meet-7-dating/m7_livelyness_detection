@@ -25,7 +25,44 @@ class M7FaceDetectorPainter extends CustomPainter {
     void paintContour(FaceContourType type) {
       final faceContour = face.contours[type];
       if (faceContour?.points != null) {
-        for (final Point point in faceContour!.points) {
+        for (var i = 0; i < faceContour!.points.length; i++) {
+          final Point<int> p1 = faceContour.points[i];
+          if (i + 1 < faceContour.points.length) {
+            final Point<int> p2 = faceContour.points[i + 1];
+            canvas.drawLine(
+              Offset(
+                M7MathHelper.instance.translateX(
+                  p1.x.toDouble(),
+                  rotation,
+                  size,
+                  absoluteImageSize,
+                ),
+                M7MathHelper.instance.translateY(
+                  p1.y.toDouble(),
+                  rotation,
+                  size,
+                  absoluteImageSize,
+                ),
+              ),
+              Offset(
+                M7MathHelper.instance.translateX(
+                  p2.x.toDouble(),
+                  rotation,
+                  size,
+                  absoluteImageSize,
+                ),
+                M7MathHelper.instance.translateY(
+                  p2.y.toDouble(),
+                  rotation,
+                  size,
+                  absoluteImageSize,
+                ),
+              ),
+              paint,
+            );
+          }
+        }
+        for (final Point point in faceContour.points) {
           canvas.drawCircle(
             Offset(
               M7MathHelper.instance.translateX(

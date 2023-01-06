@@ -1,4 +1,4 @@
-extension M7DoubleExtension on double {
+extension M7LDDoubleExtension on double {
   bool get isEven {
     return round() % 2 == 0;
   }

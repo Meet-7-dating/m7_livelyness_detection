@@ -15,10 +15,16 @@ class M7LivelynessDetection {
   final List<M7DetectionThreshold> _thresholds = [];
   Color? _contourDetectionColor;
 
+  late EdgeInsets _safeAreaPadding;
+
   //* MARK: - Public Variables
   //? =========================================================
   List<M7DetectionThreshold> get thresholdConfig {
     return _thresholds;
+  }
+
+  EdgeInsets get safeAreaPadding {
+    return _safeAreaPadding;
   }
 
   Color? get contourDetectionColor {
@@ -36,6 +42,7 @@ class M7LivelynessDetection {
     BuildContext context, {
     required M7DetectionConfig config,
   }) async {
+    _safeAreaPadding = MediaQuery.of(context).padding;
     final String? capturedFacePath = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => M7LivelynessDetectionScreen(
