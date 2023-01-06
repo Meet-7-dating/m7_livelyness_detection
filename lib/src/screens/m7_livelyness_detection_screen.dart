@@ -117,21 +117,34 @@ class _MLivelyness7DetectionScreenState
 
   void _startLiveFeed() async {
     final camera = availableCams[_cameraIndex];
+    // _cameraController = CameraController(
+    //   camera,
+    //   ResolutionPreset.high,
+    //   imageFormatGroup: ImageFormatGroup.jpeg,
+    //   enableAudio: false,
+    // );
+    // _cameraController?.initialize().then((_) {
+    //   if (!mounted) {
+    //     return;
+    //   }
+    //   _cameraController?.startImageStream(_processCameraImage);
+    //   if (mounted) {
+    //     _startTimer();
+    //     setState(() {});
+    //   }
+    // });
     _cameraController = CameraController(
       camera,
       ResolutionPreset.high,
-      imageFormatGroup: ImageFormatGroup.jpeg,
       enableAudio: false,
     );
     _cameraController?.initialize().then((_) {
       if (!mounted) {
         return;
       }
+      _startTimer();
       _cameraController?.startImageStream(_processCameraImage);
-      if (mounted) {
-        _startTimer();
-        setState(() {});
-      }
+      setState(() {});
     });
   }
 
@@ -156,6 +169,7 @@ class _MLivelyness7DetectionScreenState
     final inputImageFormat = InputImageFormatValue.fromRawValue(
       cameraImage.format.raw,
     );
+    if (inputImageFormat == null) return;
 
     final planeData = cameraImage.planes.map(
       (Plane plane) {
@@ -170,7 +184,7 @@ class _MLivelyness7DetectionScreenState
     final inputImageData = InputImageData(
       size: imageSize,
       imageRotation: imageRotation,
-      inputImageFormat: inputImageFormat ?? InputImageFormat.yuv_420_888,
+      inputImageFormat: inputImageFormat,
       planeData: planeData,
     );
 
@@ -200,7 +214,18 @@ class _MLivelyness7DetectionScreenState
           inputImage.inputImageData!.size,
           inputImage.inputImageData!.imageRotation,
         );
-        _customPaint = CustomPaint(painter: painter);
+        _customPaint = CustomPaint(
+          painter: painter,
+          child: Container(
+            color: Colors.transparent,
+            height: double.infinity,
+            width: double.infinity,
+            margin: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top,
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+          ),
+        );
         if (_isProcessingStep &&
             _steps[_stepsKey.currentState?.currentIndex ?? 0].step ==
                 M7LivelynessStep.blink) {
@@ -283,6 +308,10 @@ class _MLivelyness7DetectionScreenState
       );
     }
     _customPaint = null;
+    _didCloseEyes = false;
+    if (_stepsKey.currentState?.currentIndex != 0) {
+      _stepsKey.currentState?.reset();
+    }
     if (mounted) {
       setState(() {});
     }
@@ -425,7 +454,9 @@ class _MLivelyness7DetectionScreenState
     return Stack(
       fit: StackFit.expand,
       children: [
-        cameraView,
+        Center(
+          child: cameraView,
+        ),
         BackdropFilter(
           filter: ui.ImageFilter.blur(
             sigmaX: 5.0,
@@ -433,6 +464,8 @@ class _MLivelyness7DetectionScreenState
           ),
           child: Container(
             color: Colors.transparent,
+            width: double.infinity,
+            height: double.infinity,
           ),
         ),
         Center(
@@ -442,7 +475,10 @@ class _MLivelyness7DetectionScreenState
         M7LivelynessDetectionStepOverlay(
           key: _stepsKey,
           steps: _steps,
-          onCompleted: () => _takePicture(),
+          onCompleted: () => Future.delayed(
+            const Duration(milliseconds: 500),
+            () => _takePicture(),
+          ),
         ),
         Visibility(
           visible: _isCaptureButtonVisible,
@@ -456,7 +492,8 @@ class _MLivelyness7DetectionScreenState
               ),
               MaterialButton(
                 onPressed: () => _takePicture(),
-                color: Colors.blue,
+                color: widget.config.captureButtonColor ??
+                    Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 padding: const EdgeInsets.all(16),
                 shape: const CircleBorder(),

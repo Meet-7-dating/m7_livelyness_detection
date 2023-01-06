@@ -6,6 +6,20 @@
 ![](https://img.shields.io/pub/likes/m7_livelyness_detection?style=for-the-badge&logo=dart) ![](https://img.shields.io/pub/points/m7_livelyness_detection?style=for-the-badge&logo=dart) ![](https://img.shields.io/pub/popularity/m7_livelyness_detection?style=for-the-badge&logo=dart) ![](https://img.shields.io/pub/publisher/m7_livelyness_detection?style=for-the-badge) ![](https://img.shields.io/pub/v/m7_livelyness_detection?style=for-the-badge&logo=dart)
 ![](https://img.shields.io/github/directory-file-count/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github) ![](https://img.shields.io/github/repo-size/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github) ![](https://img.shields.io/github/commit-activity/w/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github) ![](https://img.shields.io/github/contributors/Meet-7-dating/m7_livelyness_detection?style=for-the-badge&logo=github)
 
+## Index
+* [What is the Livelyness Detection?](#whatIsLivelyness)
+* [Platform Support](#platformSupport)
+* [Installation](#installation)
+  * [Flutter Setup](#flutterSetup)
+  * [Native Setup](#flutterSetupNativeSetup)
+    * [iOS](#flutterSetupNativeiOS)
+    * [Android](#flutterSetupNativeAndroid)
+* [Example](#codeExample)
+  * [Code](#exampleCode)
+  * [Video](#exampleVideo)
+* [Contributors](#contributors)
+
+<a name="whatIsLivelyness"></a>
 ## What is the Livelyness Detection?
 
 Liveness detection for face recognition in biometrics is a technique where an algorithm detects if the person in front of the camera is alive and real. The algorithm is able to recognize a live person from presentation attacks - where a bad actor, or fraud perpetrator, uses someone else's physical characteristics or biometric data (known as "spoofs") for impersonation.
@@ -22,28 +36,33 @@ Liveness detection for face recognition in biometrics is a technique where an al
   allowfullscreen>
 </iframe>
 
+<a name="platformSupport"></a>
 ## Platform Support
 
 | iOS | Android | MacOS | Web | Linux | Windows |
 | :-: | :----: | :---: | :-: | :---: | :----: |
 |   ✔️    | ✔️  |  <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>   | <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>  |  <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>   |   <iframe src="https://embed.lottiefiles.com/animation/96163" height="25" width="25"></iframe>   |
 
+<a name="installation"></a>
 ## Installation
 First, we have to install the package on flutter.
 
-
+<a name="flutterSetup"></a>
 #### Flutter Setup
 
 Add `m7_livelyness_detection` to your `pubspec.yaml` dependencies.
 
+<a name="flutterSetupUsingCommandLine"></a>
 ##### Using command-line
 ```sh
 flutter pub add m7_livelyness_detection
 ```
 
+<a name="flutterSetupNativeSetup"></a>
 #### Native Setup
 Next comes the native setup on both android and iOS
 
+<a name="flutterSetupNativeiOS"></a>
 <details>
   <summary>iOS</summary>
   
@@ -68,6 +87,7 @@ Next comes the native setup on both android and iOS
   <img width="1440" alt="Screenshot 2023-01-02 at 11 03 17 AM" src="https://user-images.githubusercontent.com/106381741/210199508-72c0572c-c153-4178-b29a-4ae490f1e989.png">
 </details>
 
+<a name="flutterSetupNativeAndroid"></a>
 <details>
   <summary>Android</summary>
   
@@ -75,10 +95,12 @@ Next comes the native setup on both android and iOS
   1. Open the `example/android/app/build.gradle` file and set the `minSdkVersion` as `21`.
 </details>
 
+<a name="codeExample"></a>
 ## Example
 
 A call to a single line function will return a temporary path to the captured image.
 
+<a name="exampleCode"></a>
 #### Code
 ```dart
     final String? response =
@@ -102,19 +124,15 @@ A call to a single line function will return a temporary path to the captured im
     );
 ```
 
+<a name="exampleVideo"></a>
 #### Example Video
 
 https://user-images.githubusercontent.com/106381741/210200724-ae4af9cc-ffeb-49e4-a3f9-9971b2f256b6.MP4
 
-## Known Issues
-
-Here is a list of known issues in the package.
-
-* Face detection does not work on some of the android devices. The problem is still unknown and the issue is from the Google ML Kit. [Here is the link of the open issue](https://github.com/bharat-biradar/Google-Ml-Kit-plugin/issues/314).
-
+<a name="contributors"></a>
 ## Contributors
 
-| Contributors  |  |
+| Developers  |  |
 | ------------- | ------------- |
 | Sagar Ghag  | <a href="https://github.com/Meet-7-dating/m7_livelyness_detection/graphs/contributors"><img src="https://contrib.rocks/image?repo=Meet-7-dating/m7_livelyness_detection" /></a>  |
 | Omkar Tralsawala  | <a href="https://github.com/Meet-7-dating/m7_livelyness_detection/graphs/contributors"><img src="https://storage.googleapis.com/meet7_assets/archive/omkar-tralsawala-modified.png" width="65" height="65" /></a>  |

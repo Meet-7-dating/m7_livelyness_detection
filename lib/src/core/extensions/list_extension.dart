@@ -1,6 +1,6 @@
 import 'dart:math';
 
-extension M7ListExtension on List<Point<int>> {
+extension M7LDListExtension on List<Point<int>> {
   List<List<Point<int>>> splitInChunks({required int chunkSize}) {
     List<List<Point<int>>> chunks = [];
     for (var i = 0; i < length; i += chunkSize) {

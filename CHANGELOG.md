@@ -1,3 +1,36 @@
+## 0.0.4+5
+
+* Added `Index` in the documentation.
+* Minor Bug Fixes.
+
+## 0.0.4+4
+
+* Minor Bug Fixes.
+## 0.0.4+3
+
+* Minor Bug Fixes.
+
+## 0.0.4+2
+
+* Android issue resilved.
+
+## 0.0.4+1
+
+* When allowing the user to capture even after the `maxSecToDetect` seconds have passed, the background color can be set accordingly.
+```dart
+final String? response =
+    await M7LivelynessDetection.instance.detectLivelyness(
+  context,
+  config: M7DetectionConfig(
+    steps: _veificationSteps,
+    startWithInfoScreen: _startWithInfo,
+    maxSecToDetect: _timeOutDuration == 100 ? 2500 : _timeOutDuration,
+    allowAfterMaxSec: _allowAfterTimeOut,
+    captureButtonColor: Colors.red, /// <-------- Pass [captureButtonColor] to set the color.
+  ),
+);
+```
+
 ## 0.0.4
 
 * If the user's device does not support face detection and still if you want to capture the image refer to the below-mentioned code.
