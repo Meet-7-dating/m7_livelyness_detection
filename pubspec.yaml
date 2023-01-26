@@ -21,6 +21,13 @@ dependencies:
   lottie: ^2.1.0
   plugin_platform_interface: ^2.0.2
 
+dependency_overrides:
+  camera_android:
+    git:
+      url: https://github.com/bottlepay/plugins.git
+      path: packages/camera/camera_android
+      ref: e1a4dba770da9bc3cf9f858bac6837083f8b9059
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
