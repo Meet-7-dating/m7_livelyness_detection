@@ -38,12 +38,12 @@ class M7LivelynessDetection {
   /// Parameters: -
   /// * context: - Positional Parameter that will accept a `BuildContext` using which it will redirect the a new screen.
   /// * config: - Accepts a `M7DetectionConfig` object which will hold all the setup config of the package.
-  Future<String?> detectLivelyness(
+  Future<M7CapturedImage?> detectLivelyness(
     BuildContext context, {
     required M7DetectionConfig config,
   }) async {
     _safeAreaPadding = MediaQuery.of(context).padding;
-    final String? capturedFacePath = await Navigator.of(context).push(
+    final M7CapturedImage? capturedFacePath = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => M7LivelynessDetectionScreen(
           config: config,

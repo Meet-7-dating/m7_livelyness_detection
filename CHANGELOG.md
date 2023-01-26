@@ -1,3 +1,22 @@
+## 0.0.5
+
+* Now identify wether the image was captured via the button or not from the below-mentioned code.
+```dart
+    final M7CapturedImage? response =
+        await M7LivelynessDetection.instance.detectLivelyness(
+      context,
+      config: M7DetectionConfig(
+        steps: _veificationSteps,
+        startWithInfoScreen: _startWithInfo,
+        maxSecToDetect: _timeOutDuration == 100 ? 2500 : _timeOutDuration,
+        allowAfterMaxSec: _allowAfterTimeOut,
+        captureButtonColor: Colors.red,
+      ),
+    );
+
+    // response?.didCaptureAutomatically
+```
+
 ## 0.0.4+5
 
 * Added `Index` in the documentation.
