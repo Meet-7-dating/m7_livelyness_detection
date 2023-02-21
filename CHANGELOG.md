@@ -1,6 +1,6 @@
 ## 0.0.5
 
-* Now identify wether the image was captured via the button or not from the below-mentioned code.
+* Now identify wether the image was captured via the button or not from the below-mentioned code
 ```dart
     final M7CapturedImage? response =
         await M7LivelynessDetection.instance.detectLivelyness(
