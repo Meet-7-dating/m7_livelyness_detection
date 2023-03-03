@@ -269,7 +269,9 @@ class _MLivelyness7DetectionScreenState
     _stopProcessing();
   }
 
-  void _takePicture() async {
+  void _takePicture({
+    required bool didCaptureAutomatically,
+  }) async {
     try {
       if (_cameraController == null) return;
       // if (face == null) return;
@@ -285,7 +287,10 @@ class _MLivelyness7DetectionScreenState
         _startLiveFeed();
         return;
       }
-      _onDetectionCompleted(imgToReturn: clickedImage);
+      _onDetectionCompleted(
+        imgToReturn: clickedImage,
+        didCaptureAutomatically: didCaptureAutomatically,
+      );
     } catch (e) {
       _startLiveFeed();
     }
@@ -293,9 +298,19 @@ class _MLivelyness7DetectionScreenState
 
   void _onDetectionCompleted({
     XFile? imgToReturn,
+    bool? didCaptureAutomatically,
   }) {
-    final String? imgPath = imgToReturn?.path;
-    Navigator.of(context).pop(imgPath);
+    final String imgPath = imgToReturn?.path ?? "";
+    if (imgPath.isEmpty || didCaptureAutomatically == null) {
+      Navigator.of(context).pop(null);
+      return;
+    }
+    Navigator.of(context).pop(
+      M7CapturedImage(
+        imgPath: imgPath,
+        didCaptureAutomatically: didCaptureAutomatically,
+      ),
+    );
   }
 
   void _resetSteps() async {
@@ -426,6 +441,7 @@ class _MLivelyness7DetectionScreenState
               child: IconButton(
                 onPressed: () => _onDetectionCompleted(
                   imgToReturn: null,
+                  didCaptureAutomatically: null,
                 ),
                 icon: const Icon(
                   Icons.close_rounded,
@@ -477,7 +493,9 @@ class _MLivelyness7DetectionScreenState
           steps: _steps,
           onCompleted: () => Future.delayed(
             const Duration(milliseconds: 500),
-            () => _takePicture(),
+            () => _takePicture(
+              didCaptureAutomatically: true,
+            ),
           ),
         ),
         Visibility(
@@ -491,7 +509,9 @@ class _MLivelyness7DetectionScreenState
                 flex: 20,
               ),
               MaterialButton(
-                onPressed: () => _takePicture(),
+                onPressed: () => _takePicture(
+                  didCaptureAutomatically: false,
+                ),
                 color: widget.config.captureButtonColor ??
                     Theme.of(context).primaryColor,
                 textColor: Colors.white,

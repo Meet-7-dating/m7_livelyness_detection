@@ -68,7 +68,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
 
   void _onStartLivelyness() async {
     setState(() => _capturedImagePath = null);
-    final String? response =
+    final M7CapturedImage? response =
         await M7LivelynessDetection.instance.detectLivelyness(
       context,
       config: M7DetectionConfig(
@@ -83,7 +83,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       return;
     }
     setState(
-      () => _capturedImagePath = response,
+      () => _capturedImagePath = response.imgPath,
     );
   }
 

@@ -12,7 +12,7 @@ class _M7LabelStrings {
   final String lookStraightSubText =
       "Hold your phone at eye level and look straight to the camera";
   final String infoSubText =
-      "We use this selfie to compare with the mandatory(s) photos on the next step";
+      "We use this selfie to compare with the mandatory photo(s) on the next step";
 }
 
 class _M7ButtonStrings {
