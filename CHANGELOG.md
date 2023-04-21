@@ -1,3 +1,34 @@
+# 0.0.6+1
+### Added
+* Configurable `detectionColor` on the face using the below-mentioned code
+```dart
+    M7LivelynessStepItem(
+      step: M7LivelynessStep.blink,
+      title: "Blink",
+      isCompleted: false,
+      detectionColor: Colors.amber, // <--- Detection Color
+    )
+```
+## 0.0.6
+### Added
+* Configurable `contour lines & dots` on the face
+```dart
+    M7LivelynessDetection.instance.configure(
+      lineColor: Colors.white,          // <--- Line Color
+      dotColor: Colors.purple.shade800, // <--- Dot Color
+      thresholds: [
+        M7SmileDetectionThreshold(
+          probability: 0.8,
+        ),
+        M7BlinkDetectionThreshold(
+          leftEyeProbability: 0.25,
+          rightEyeProbability: 0.25,
+        ),
+      ],
+    );
+```
+### Changed
+* Camera preview now uses direct stream from native camera stream.
 ## 0.0.5
 
 * Now identify wether the image was captured via the button or not from the below-mentioned code

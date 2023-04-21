@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'package:m7_livelyness_detection/index.dart';
 
 class M7Utils {
   static Point<int> middlePoint({
@@ -14,5 +14,9 @@ class M7Utils {
       (p0 + q0) ~/ 2,
       (p1 + q1) ~/ 2,
     );
+  }
+
+  static String generate() {
+    return const Uuid().v4();
   }
 }

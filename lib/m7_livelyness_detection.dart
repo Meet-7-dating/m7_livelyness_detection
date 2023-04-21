@@ -13,7 +13,10 @@ class M7LivelynessDetection {
   //* MARK: - Private Variables
   //? =========================================================
   final List<M7DetectionThreshold> _thresholds = [];
-  Color? _contourDetectionColor;
+  Color? _contourLineColor;
+  Color? _contourDotColor;
+  double? _contourDotRadius;
+  double? _contourLineWidth;
 
   late EdgeInsets _safeAreaPadding;
 
@@ -27,8 +30,20 @@ class M7LivelynessDetection {
     return _safeAreaPadding;
   }
 
-  Color? get contourDetectionColor {
-    return _contourDetectionColor;
+  Color? get contourLineColor {
+    return _contourLineColor;
+  }
+
+  Color? get contourDotColor {
+    return _contourDotColor;
+  }
+
+  double? get contourDotRadius {
+    return _contourDotRadius;
+  }
+
+  double? get contourLineWidth {
+    return _contourLineWidth;
   }
 
   //* MARK: - Public Methods
@@ -45,7 +60,7 @@ class M7LivelynessDetection {
     _safeAreaPadding = MediaQuery.of(context).padding;
     final M7CapturedImage? capturedFacePath = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => M7LivelynessDetectionScreen(
+        builder: (context) => M7LivelynessDetectionPageV2(
           config: config,
         ),
       ),
@@ -59,7 +74,10 @@ class M7LivelynessDetection {
   /// * contourColor - Color of the points that are plotted on the face while detecting.
   void configure({
     required List<M7DetectionThreshold> thresholds,
-    Color contourColor = const Color(0xffab48e0),
+    Color lineColor = const Color(0xffab48e0),
+    Color dotColor = const Color(0xffab48e0),
+    double lineWidth = 1.6,
+    double dotSize = 2.0,
   }) {
     assert(
       thresholds.isNotEmpty,
@@ -67,6 +85,9 @@ class M7LivelynessDetection {
     );
     _thresholds.clear();
     _thresholds.addAll(thresholds);
-    _contourDetectionColor = contourColor;
+    _contourLineColor = lineColor;
+    _contourDotColor = dotColor;
+    _contourDotRadius = dotSize;
+    _contourLineWidth = lineWidth;
   }
 }
