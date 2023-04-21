@@ -19,6 +19,7 @@ class M7LivelynessDetection {
   double? _contourLineWidth;
   bool _displayLines = true;
   bool _displayDots = true;
+  List<double>? _dashValues;
 
   late EdgeInsets _safeAreaPadding;
 
@@ -56,6 +57,18 @@ class M7LivelynessDetection {
     return _displayDots;
   }
 
+  bool get displayDash {
+    return _dashValues != null && _dashValues!.length == 2;
+  }
+
+  double get dashLength {
+    return _dashValues?[0] ?? 5;
+  }
+
+  double get dashGap {
+    return _dashValues?[1] ?? 5;
+  }
+
   //* MARK: - Public Methods
   //? =========================================================
 
@@ -90,10 +103,15 @@ class M7LivelynessDetection {
     double dotSize = 2.0,
     bool displayLines = true,
     bool displayDots = true,
+    List<double>? dashValues,
   }) {
     assert(
       thresholds.isNotEmpty,
       "Threshold configuration cannot be empty",
+    );
+    assert(
+      _dashValues == null || _dashValues!.length == 2,
+      "Dash values must be of length 2",
     );
     _thresholds.clear();
     _thresholds.addAll(thresholds);
@@ -103,5 +121,6 @@ class M7LivelynessDetection {
     _contourLineWidth = lineWidth;
     _displayLines = displayLines;
     _displayDots = displayDots;
+    _dashValues = dashValues;
   }
 }

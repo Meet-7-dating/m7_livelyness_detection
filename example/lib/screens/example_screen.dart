@@ -58,7 +58,8 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       lineColor: Colors.white,
       dotColor: Colors.purple.shade800,
       dotSize: 2.0,
-      lineWidth: 1.6,
+      lineWidth: 2,
+      dashValues: [2.0, 5.0],
       displayDots: false,
       displayLines: true,
       thresholds: [
