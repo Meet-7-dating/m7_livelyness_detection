@@ -17,6 +17,8 @@ class M7LivelynessDetection {
   Color? _contourDotColor;
   double? _contourDotRadius;
   double? _contourLineWidth;
+  bool _displayLines = true;
+  bool _displayDots = true;
 
   late EdgeInsets _safeAreaPadding;
 
@@ -44,6 +46,14 @@ class M7LivelynessDetection {
 
   double? get contourLineWidth {
     return _contourLineWidth;
+  }
+
+  bool get displayLines {
+    return _displayLines;
+  }
+
+  bool get displayDots {
+    return _displayDots;
   }
 
   //* MARK: - Public Methods
@@ -78,6 +88,8 @@ class M7LivelynessDetection {
     Color dotColor = const Color(0xffab48e0),
     double lineWidth = 1.6,
     double dotSize = 2.0,
+    bool displayLines = true,
+    bool displayDots = true,
   }) {
     assert(
       thresholds.isNotEmpty,
@@ -89,5 +101,7 @@ class M7LivelynessDetection {
     _contourDotColor = dotColor;
     _contourDotRadius = dotSize;
     _contourLineWidth = lineWidth;
+    _displayLines = displayLines;
+    _displayDots = displayDots;
   }
 }

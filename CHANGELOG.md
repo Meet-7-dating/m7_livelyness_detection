@@ -1,4 +1,26 @@
-# 0.0.6+1
+# 0.0.6+2
+### Added
+* Configurable visibility of the contour dots & lines
+```dart
+    M7LivelynessDetection.instance.configure(
+      lineColor: Colors.white,
+      dotColor: Colors.purple.shade800,
+      dotSize: 2.0,
+      lineWidth: 1.6,
+      displayDots: false,
+      displayLines: true,
+      thresholds: [
+        M7SmileDetectionThreshold(
+          probability: 0.8,
+        ),
+        M7BlinkDetectionThreshold(
+          leftEyeProbability: 0.25,
+          rightEyeProbability: 0.25,
+        ),
+      ],
+    );
+```
+## 0.0.6+1
 ### Added
 * Configurable `detectionColor` on the face using the below-mentioned code
 ```dart

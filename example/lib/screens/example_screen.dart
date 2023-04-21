@@ -59,6 +59,8 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       dotColor: Colors.purple.shade800,
       dotSize: 2.0,
       lineWidth: 1.6,
+      displayDots: false,
+      displayLines: true,
       thresholds: [
         M7SmileDetectionThreshold(
           probability: 0.8,

@@ -85,38 +85,42 @@ class M7AndroidFaceDetectorPainter extends CustomPainter {
                   )
                   .toList(),
               true);
-          for (var element in faceContour.points) {
-            canvas.drawCircle(
-              _croppedPosition(
-                element,
-                croppedSize: croppedSize,
-                painterSize: size,
-                ratio: ratioAnalysisToPreview,
-                flipXY: flipXY,
-              ),
-              4,
-              Paint()
-                ..color = detectionColor ??
-                    M7LivelynessDetection.instance.contourDotColor ??
-                    Colors.purple.shade800
-                ..strokeWidth =
-                    M7LivelynessDetection.instance.contourDotRadius ?? 2,
-            );
+          if (M7LivelynessDetection.instance.displayDots) {
+            for (var element in faceContour.points) {
+              canvas.drawCircle(
+                _croppedPosition(
+                  element,
+                  croppedSize: croppedSize,
+                  painterSize: size,
+                  ratio: ratioAnalysisToPreview,
+                  flipXY: flipXY,
+                ),
+                4,
+                Paint()
+                  ..color = detectionColor ??
+                      M7LivelynessDetection.instance.contourDotColor ??
+                      Colors.purple.shade800
+                  ..strokeWidth =
+                      M7LivelynessDetection.instance.contourDotRadius ?? 2,
+              );
+            }
           }
         }
       });
       paths.removeWhere((key, value) => value.getBounds().isEmpty);
-      for (var p in paths.entries) {
-        canvas.drawPath(
-          p.value,
-          Paint()
-            ..color = detectionColor ??
-                M7LivelynessDetection.instance.contourLineColor ??
-                Colors.white
-            ..strokeWidth =
-                M7LivelynessDetection.instance.contourLineWidth ?? 1.6
-            ..style = PaintingStyle.stroke,
-        );
+      if (M7LivelynessDetection.instance.displayLines) {
+        for (var p in paths.entries) {
+          canvas.drawPath(
+            p.value,
+            Paint()
+              ..color = detectionColor ??
+                  M7LivelynessDetection.instance.contourLineColor ??
+                  Colors.white
+              ..strokeWidth =
+                  M7LivelynessDetection.instance.contourLineWidth ?? 1.6
+              ..style = PaintingStyle.stroke,
+          );
+        }
       }
     }
   }
