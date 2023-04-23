@@ -1,4 +1,8 @@
-# 0.0.6+3
+# 0.0.6+4
+### Added
+* Bug fixes
+* Performance Improvements
+## 0.0.6+3
 ### Added
 * Configurable dash lines on the face
 ```dart
