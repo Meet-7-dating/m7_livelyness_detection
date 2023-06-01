@@ -13,7 +13,13 @@ class M7LivelynessDetection {
   //* MARK: - Private Variables
   //? =========================================================
   final List<M7DetectionThreshold> _thresholds = [];
-  Color? _contourDetectionColor;
+  Color? _contourLineColor;
+  Color? _contourDotColor;
+  double? _contourDotRadius;
+  double? _contourLineWidth;
+  bool _displayLines = true;
+  bool _displayDots = true;
+  List<double>? _dashValues;
 
   late EdgeInsets _safeAreaPadding;
 
@@ -27,8 +33,40 @@ class M7LivelynessDetection {
     return _safeAreaPadding;
   }
 
-  Color? get contourDetectionColor {
-    return _contourDetectionColor;
+  Color? get contourLineColor {
+    return _contourLineColor;
+  }
+
+  Color? get contourDotColor {
+    return _contourDotColor;
+  }
+
+  double? get contourDotRadius {
+    return _contourDotRadius;
+  }
+
+  double? get contourLineWidth {
+    return _contourLineWidth;
+  }
+
+  bool get displayLines {
+    return _displayLines;
+  }
+
+  bool get displayDots {
+    return _displayDots;
+  }
+
+  bool get displayDash {
+    return _dashValues != null && _dashValues!.length == 2;
+  }
+
+  double get dashLength {
+    return _dashValues?[0] ?? 5;
+  }
+
+  double get dashGap {
+    return _dashValues?[1] ?? 5;
   }
 
   //* MARK: - Public Methods
@@ -38,16 +76,20 @@ class M7LivelynessDetection {
   /// Parameters: -
   /// * context: - Positional Parameter that will accept a `BuildContext` using which it will redirect the a new screen.
   /// * config: - Accepts a `M7DetectionConfig` object which will hold all the setup config of the package.
-  Future<String?> detectLivelyness(
+  Future<M7CapturedImage?> detectLivelyness(
     BuildContext context, {
     required M7DetectionConfig config,
   }) async {
     _safeAreaPadding = MediaQuery.of(context).padding;
-    final String? capturedFacePath = await Navigator.of(context).push(
+    final M7CapturedImage? capturedFacePath = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => M7LivelynessDetectionScreen(
-          config: config,
-        ),
+        builder: (context) => Platform.isIOS
+            ? M7LivelynessDetectionScreenV1(
+                config: config,
+              )
+            : M7LivelynessDetectionPageV2(
+                config: config,
+              ),
       ),
     );
     return capturedFacePath;
@@ -59,14 +101,30 @@ class M7LivelynessDetection {
   /// * contourColor - Color of the points that are plotted on the face while detecting.
   void configure({
     required List<M7DetectionThreshold> thresholds,
-    Color contourColor = const Color(0xffab48e0),
+    Color lineColor = const Color(0xffab48e0),
+    Color dotColor = const Color(0xffab48e0),
+    double lineWidth = 1.6,
+    double dotSize = 2.0,
+    bool displayLines = true,
+    bool displayDots = true,
+    List<double>? dashValues,
   }) {
     assert(
       thresholds.isNotEmpty,
       "Threshold configuration cannot be empty",
     );
+    assert(
+      _dashValues == null || _dashValues!.length == 2,
+      "Dash values must be of length 2",
+    );
     _thresholds.clear();
     _thresholds.addAll(thresholds);
-    _contourDetectionColor = contourColor;
+    _contourLineColor = lineColor;
+    _contourDotColor = dotColor;
+    _contourDotRadius = dotSize;
+    _contourLineWidth = lineWidth;
+    _displayLines = displayLines;
+    _displayDots = displayDots;
+    _dashValues = dashValues;
   }
 }

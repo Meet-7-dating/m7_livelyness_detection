@@ -42,9 +42,7 @@ class _M7LivelynessInfoWidgetState extends State<M7LivelynessInfoWidget> {
               fontSize: 22,
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const Spacer(),
           Text(
             M7StringConstants.label.infoSubText,
             textAlign: TextAlign.center,
@@ -190,26 +188,40 @@ class _M7LivelynessInfoWidgetState extends State<M7LivelynessInfoWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
-                textAlign: TextAlign.start,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
+              Expanded(
+                flex: 5,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                subTitle,
-                textAlign: TextAlign.start,
-                style: const TextStyle(
-                  color: Colors.blueGrey,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14,
-                  height: 1.5,
+              // const Spacer(),
+              Expanded(
+                flex: 10,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    subTitle,
+                    textAlign: TextAlign.start,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                      height: 1.5,
+                    ),
+                  ),
                 ),
               ),
             ],

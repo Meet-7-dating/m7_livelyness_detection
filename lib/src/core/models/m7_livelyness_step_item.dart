@@ -6,12 +6,14 @@ class M7LivelynessStepItem {
   final String title;
   final double? thresholdToCheck;
   final bool isCompleted;
+  final Color? detectionColor;
 
   M7LivelynessStepItem({
     required this.step,
     required this.title,
     this.thresholdToCheck,
     required this.isCompleted,
+    this.detectionColor,
   });
 
   M7LivelynessStepItem copyWith({
@@ -19,12 +21,14 @@ class M7LivelynessStepItem {
     String? title,
     double? thresholdToCheck,
     bool? isCompleted,
+    Color? detectionColor,
   }) {
     return M7LivelynessStepItem(
       step: step ?? this.step,
       title: title ?? this.title,
       thresholdToCheck: thresholdToCheck ?? this.thresholdToCheck,
       isCompleted: isCompleted ?? this.isCompleted,
+      detectionColor: detectionColor ?? this.detectionColor,
     );
   }
 
@@ -37,6 +41,9 @@ class M7LivelynessStepItem {
       result.addAll({'thresholdToCheck': thresholdToCheck});
     }
     result.addAll({'isCompleted': isCompleted});
+    if (detectionColor != null) {
+      result.addAll({'detectionColor': detectionColor!.value});
+    }
 
     return result;
   }
@@ -47,6 +54,8 @@ class M7LivelynessStepItem {
       title: map['title'] ?? '',
       thresholdToCheck: map['thresholdToCheck']?.toDouble(),
       isCompleted: map['isCompleted'] ?? false,
+      detectionColor:
+          map['detectionColor'] != null ? Color(map['detectionColor']) : null,
     );
   }
 
@@ -57,7 +66,7 @@ class M7LivelynessStepItem {
 
   @override
   String toString() {
-    return 'M7LivelynessStepItem(step: $step, title: $title, thresholdToCheck: $thresholdToCheck, isCompleted: $isCompleted)';
+    return 'M7LivelynessStepItem(step: $step, title: $title, thresholdToCheck: $thresholdToCheck, isCompleted: $isCompleted, detectionColor: $detectionColor)';
   }
 
   @override
@@ -68,7 +77,8 @@ class M7LivelynessStepItem {
         other.step == step &&
         other.title == title &&
         other.thresholdToCheck == thresholdToCheck &&
-        other.isCompleted == isCompleted;
+        other.isCompleted == isCompleted &&
+        other.detectionColor == detectionColor;
   }
 
   @override
@@ -76,6 +86,7 @@ class M7LivelynessStepItem {
     return step.hashCode ^
         title.hashCode ^
         thresholdToCheck.hashCode ^
-        isCompleted.hashCode;
+        isCompleted.hashCode ^
+        detectionColor.hashCode;
   }
 }
