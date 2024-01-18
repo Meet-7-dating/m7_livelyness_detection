@@ -3,13 +3,11 @@ import 'package:m7_livelyness_detection/index.dart';
 class M7LivelynessStepItem {
   //enum
   final M7LivelynessStep step;
-  final String title;
   final double? thresholdToCheck;
   final bool isCompleted;
 
   M7LivelynessStepItem({
     required this.step,
-    required this.title,
     this.thresholdToCheck,
     required this.isCompleted,
   });
@@ -22,7 +20,6 @@ class M7LivelynessStepItem {
   }) {
     return M7LivelynessStepItem(
       step: step ?? this.step,
-      title: title ?? this.title,
       thresholdToCheck: thresholdToCheck ?? this.thresholdToCheck,
       isCompleted: isCompleted ?? this.isCompleted,
     );
@@ -32,7 +29,6 @@ class M7LivelynessStepItem {
     final result = <String, dynamic>{};
 
     result.addAll({'step': step.index});
-    result.addAll({'title': title});
     if (thresholdToCheck != null) {
       result.addAll({'thresholdToCheck': thresholdToCheck});
     }
@@ -44,7 +40,6 @@ class M7LivelynessStepItem {
   factory M7LivelynessStepItem.fromMap(Map<String, dynamic> map) {
     return M7LivelynessStepItem(
       step: M7LivelynessStep.values[map['step'] ?? 0],
-      title: map['title'] ?? '',
       thresholdToCheck: map['thresholdToCheck']?.toDouble(),
       isCompleted: map['isCompleted'] ?? false,
     );
@@ -57,7 +52,7 @@ class M7LivelynessStepItem {
 
   @override
   String toString() {
-    return 'M7LivelynessStepItem(step: $step, title: $title, thresholdToCheck: $thresholdToCheck, isCompleted: $isCompleted)';
+    return 'M7LivelynessStepItem(step: $step, thresholdToCheck: $thresholdToCheck, isCompleted: $isCompleted)';
   }
 
   @override
@@ -66,7 +61,6 @@ class M7LivelynessStepItem {
 
     return other is M7LivelynessStepItem &&
         other.step == step &&
-        other.title == title &&
         other.thresholdToCheck == thresholdToCheck &&
         other.isCompleted == isCompleted;
   }
@@ -74,7 +68,6 @@ class M7LivelynessStepItem {
   @override
   int get hashCode {
     return step.hashCode ^
-        title.hashCode ^
         thresholdToCheck.hashCode ^
         isCompleted.hashCode;
   }
