@@ -413,29 +413,6 @@ class _MLivelyness7DetectionScreenState
                   _startLiveFeed();
                 },
               ),
-        Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: 10,
-              top: 10,
-            ),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.black,
-              child: IconButton(
-                onPressed: () => _onDetectionCompleted(
-                  imgToReturn: null,
-                ),
-                icon: const Icon(
-                  Icons.close_rounded,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -457,17 +434,6 @@ class _MLivelyness7DetectionScreenState
         Center(
           child: cameraView,
         ),
-        BackdropFilter(
-          filter: ui.ImageFilter.blur(
-            sigmaX: 5.0,
-            sigmaY: 5.0,
-          ),
-          child: Container(
-            color: Colors.transparent,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-        ),
         Center(
           child: cameraView,
         ),
@@ -488,7 +454,7 @@ class _MLivelyness7DetectionScreenState
             mainAxisSize: MainAxisSize.min,
             children: [
               const Spacer(
-                flex: 20,
+                flex: 30,
               ),
               MaterialButton(
                 onPressed: () => _takePicture(),

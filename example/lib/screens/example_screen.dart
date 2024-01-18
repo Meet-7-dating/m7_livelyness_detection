@@ -41,13 +41,7 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
     _veificationSteps.addAll(
       [
         M7LivelynessStepItem(
-          step: M7LivelynessStep.smile,
-          title: "Smile",
-          isCompleted: false,
-        ),
-        M7LivelynessStepItem(
           step: M7LivelynessStep.blink,
-          title: "Blink",
           isCompleted: false,
         ),
       ],
@@ -144,7 +138,6 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       _veificationSteps.add(
         M7LivelynessStepItem(
           step: step,
-          title: _getTitle(step),
           isCompleted: false,
         ),
       );
