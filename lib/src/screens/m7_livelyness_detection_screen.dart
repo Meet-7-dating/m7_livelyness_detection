@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
@@ -38,6 +39,8 @@ class _MLivelyness7DetectionScreenState
 
   late final List<M7LivelynessStepItem> _steps;
 
+  ValueNotifier<List<double>> smileProgress = ValueNotifier<List<double>>([]);
+
   //* MARK: - Life Cycle Methods
   //? =========================================================
   @override
@@ -74,6 +77,8 @@ class _MLivelyness7DetectionScreenState
   }
 
   void _postFrameCallBack() async {
+    print('started dettection');
+
     availableCams = await availableCameras();
     if (availableCams.any(
       (element) =>
@@ -202,7 +207,7 @@ class _MLivelyness7DetectionScreenState
     }
     _isBusy = true;
     final faces = await M7MLHelper.instance.processInputImage(inputImage);
-
+    print("faces :- ${faces.length}");
     if (inputImage.inputImageData?.size != null &&
         inputImage.inputImageData?.imageRotation != null) {
       if (faces.isEmpty) {
@@ -238,6 +243,7 @@ class _MLivelyness7DetectionScreenState
             }
           }
         }
+
         _detect(
           face: faces.first,
           step: _steps[_stepsKey.currentState?.currentIndex ?? 0].step,
@@ -266,7 +272,40 @@ class _MLivelyness7DetectionScreenState
       setState(() {});
     }
     await _stepsKey.currentState?.nextPage();
+    if (_steps[indexToUpdate].step == M7LivelynessStep.smile) {
+      smileProgress.removeListener(calculateSmileProgression);
+    }
     _stopProcessing();
+  }
+
+  void initiateSmileDetector() {
+    if (_steps[_stepsKey.currentState?.currentIndex ?? 0].step ==
+            M7LivelynessStep.smile &&
+        !_steps[_stepsKey.currentState?.currentIndex ?? 0].isCompleted) {
+      smileProgress.addListener(calculateSmileProgression);
+    }
+  }
+
+  Future<void> calculateSmileProgression() async {
+    print("smile progress length ${smileProgress.value.length}");
+    if (smileProgress.value.length >= 10) {
+      final M7SmileDetectionThreshold? smileThreshold =
+          M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+        (p0) => p0 is M7SmileDetectionThreshold,
+      ) as M7SmileDetectionThreshold?;
+      final smileFaces = smileProgress.value
+          .where((element) => (element > (smileThreshold?.probability ?? 0.75)))
+          .length;
+      final midSmileFaces = smileProgress.value
+          .where((element) => (element > 0.5 && element < 0.75))
+          .length;
+      final noSmileFaces =
+          smileProgress.value.where((element) => (element < 0.5)).length;
+      if (smileFaces > 0 && midSmileFaces > 0 && noSmileFaces > 0) {
+        await _completeStep(
+            step: _steps[_stepsKey.currentState?.currentIndex ?? 0].step);
+      }
+    }
   }
 
   void _takePicture({
@@ -418,15 +457,13 @@ class _MLivelyness7DetectionScreenState
         }
         break;
       case M7LivelynessStep.smile:
-        final M7SmileDetectionThreshold? smileThreshold =
-            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
-          (p0) => p0 is M7SmileDetectionThreshold,
-        ) as M7SmileDetectionThreshold?;
-        if ((face.smilingProbability ?? 0) >
-            (smileThreshold?.probability ?? 0.75)) {
-          _startProcessing();
-          await _completeStep(step: step);
+        print("smile probability ${face.smilingProbability}");
+
+        if (face.smilingProbability != null) {
+          smileProgress.value.add(face.smilingProbability!);
         }
+        _startProcessing();
+
         break;
     }
   }
@@ -517,6 +554,9 @@ class _MLivelyness7DetectionScreenState
               didCaptureAutomatically: true,
             ),
           ),
+          initiateSmileDetector: () {
+            initiateSmileDetector();
+          },
         ),
         Visibility(
           visible: _isCaptureButtonVisible,

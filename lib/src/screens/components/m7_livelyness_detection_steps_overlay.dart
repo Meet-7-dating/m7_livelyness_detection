@@ -3,11 +3,13 @@ import 'package:m7_livelyness_detection/index.dart';
 class M7LivelynessDetectionStepOverlay extends StatefulWidget {
   final List<M7LivelynessStepItem> steps;
   final VoidCallback onCompleted;
-  const M7LivelynessDetectionStepOverlay({
-    Key? key,
-    required this.steps,
-    required this.onCompleted,
-  }) : super(key: key);
+  final VoidCallback initiateSmileDetector;
+  const M7LivelynessDetectionStepOverlay(
+      {Key? key,
+      required this.steps,
+      required this.onCompleted,
+      required this.initiateSmileDetector})
+      : super(key: key);
 
   @override
   State<M7LivelynessDetectionStepOverlay> createState() =>
@@ -37,6 +39,7 @@ class M7LivelynessDetectionStepOverlayState
     _pageController = PageController(
       initialPage: 0,
     );
+    widget.initiateSmileDetector();
     super.initState();
   }
 
@@ -84,6 +87,7 @@ class M7LivelynessDetectionStepOverlayState
       );
       _hideLoader();
       setState(() => _currentIndex++);
+      widget.initiateSmileDetector();
     } else {
       widget.onCompleted();
     }

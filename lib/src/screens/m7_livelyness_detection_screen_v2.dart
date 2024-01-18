@@ -52,6 +52,7 @@ class _M7LivelynessDetectionScreenAndroidState
   late final faceDetector = FaceDetector(options: options);
   bool _didCloseEyes = false;
   bool _isProcessingStep = false;
+  ValueNotifier<List<double>> smileProgress = ValueNotifier<List<double>>([]);
 
   late final List<M7LivelynessStepItem> _steps;
   final GlobalKey<M7LivelynessDetectionStepOverlayState> _stepsKey =
@@ -102,6 +103,33 @@ class _M7LivelynessDetectionScreenAndroidState
     }
   }
 
+  void initiateSmileDetector() {
+    if (_steps[_stepsKey.currentState?.currentIndex ?? 0].step ==
+            M7LivelynessStep.smile &&
+        !_steps[_stepsKey.currentState?.currentIndex ?? 0].isCompleted) {
+      smileProgress.addListener(calculateSmileProgression);
+    }
+  }
+
+  Future<void> calculateSmileProgression() async {
+    // print("smile progress length ${smileProgress.value.length}");
+    if (smileProgress.value.length >= 10) {
+      final smileFaces =
+          smileProgress.value.where((element) => (element > 0.75)).length;
+      final midSmileFaces = smileProgress.value
+          .where((element) => (element > 0.5 && element < 0.75))
+          .length;
+      final noSmileFaces =
+          smileProgress.value.where((element) => (element < 0.5)).length;
+      // print(
+      //     "smile faces :- $smileFaces midSmileFaces :- $midSmileFaces noSmileFaces :- $noSmileFaces");
+      if (smileFaces > 0 && (midSmileFaces > 0 || noSmileFaces > 0)) {
+        await _completeStep(
+            step: _steps[_stepsKey.currentState?.currentIndex ?? 0].step);
+      }
+    }
+  }
+
   Future<void> _processCameraImage(AnalysisImage img) async {
     if (_isProcessing) {
       return;
@@ -116,6 +144,8 @@ class _M7LivelynessDetectionScreenAndroidState
     try {
       final List<Face> detectedFaces =
           await faceDetector.processImage(inputImage);
+      print('facesV2 :- ${detectedFaces.length}');
+
       _faceDetectionController.add(
         FaceDetectionModel(
           faces: detectedFaces,
@@ -231,6 +261,10 @@ class _M7LivelynessDetectionScreenAndroidState
       setState(() {});
     }
     await _stepsKey.currentState?.nextPage();
+    if (_steps[indexToUpdate].step == M7LivelynessStep.smile) {
+      smileProgress.removeListener(calculateSmileProgression);
+      smileProgress.value.clear();
+    }
     _stopProcessing();
   }
 
@@ -266,11 +300,18 @@ class _M7LivelynessDetectionScreenAndroidState
         }
         break;
       case M7LivelynessStep.smile:
-        const double smileThreshold = 0.75;
-        if ((face.smilingProbability ?? 0) > (smileThreshold)) {
-          _startProcessing();
-          await _completeStep(step: step);
+        print("smile probability ${face.smilingProbability}");
+
+        if (face.smilingProbability != null) {
+          smileProgress.value.add(face.smilingProbability!);
+          smileProgress.notifyListeners();
         }
+        _startProcessing();
+        // const double smileThreshold = 0.75;
+
+        // if ((face.smilingProbability ?? 0) > (smileThreshold)) {
+        //   await _completeStep(step: step);
+        // }
         break;
     }
   }
@@ -438,6 +479,7 @@ class _M7LivelynessDetectionScreenAndroidState
             onCompleted: () => _takePicture(
               didCaptureAutomatically: true,
             ),
+            initiateSmileDetector: initiateSmileDetector,
           ),
         Visibility(
           visible: _isCaptureButtonVisible,
