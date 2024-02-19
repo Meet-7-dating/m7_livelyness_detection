@@ -6,32 +6,24 @@ repository: https://github.com/Meet-7-dating/m7_livelyness_detection/
 issue_tracker: https://github.com/Meet-7-dating/m7_livelyness_detection/issues
 
 environment:
-  sdk: '>=2.18.6 <3.0.0'
-  flutter: ">=2.5.0"
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
-  animate_do: ^3.0.2
-  camera: ^0.10.1
-  collection: ^1.16.0
+  animate_do: ^3.3.3
+  camera: ^0.10.5+9
   equatable: ^2.0.5
+  google_mlkit_face_detection: ^0.9.0
+  lottie: ^3.0.0
+  plugin_platform_interface: ^2.1.8
+  collection: ^1.18.0
   flutter:
     sdk: flutter
-  google_mlkit_face_detection: ^0.5.0
-  image: ^3.0.2
-  lottie: ^2.1.0
-  plugin_platform_interface: ^2.0.2
 
-dependency_overrides:
-  camera_android:
-    git:
-      url: https://github.com/bottlepay/plugins.git
-      path: packages/camera/camera_android
-      ref: e1a4dba770da9bc3cf9f858bac6837083f8b9059
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   plugin:

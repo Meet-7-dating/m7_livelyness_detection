@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
+import 'package:flutter/services.dart';
 import 'package:m7_livelyness_detection/index.dart';
 
 List<CameraDescription> availableCams = [];
@@ -14,12 +15,10 @@ class M7LivelynessDetectionScreen extends StatefulWidget {
   });
 
   @override
-  State<M7LivelynessDetectionScreen> createState() =>
-      _MLivelyness7DetectionScreenState();
+  State<M7LivelynessDetectionScreen> createState() => _MLivelyness7DetectionScreenState();
 }
 
-class _MLivelyness7DetectionScreenState
-    extends State<M7LivelynessDetectionScreen> {
+class _MLivelyness7DetectionScreenState extends State<M7LivelynessDetectionScreen> {
   //* MARK: - Private Variables
   //? =========================================================
   late bool _isInfoStepCompleted;
@@ -28,8 +27,7 @@ class _MLivelyness7DetectionScreenState
   CustomPaint? _customPaint;
   int _cameraIndex = 0;
   bool _isBusy = false;
-  final GlobalKey<M7LivelynessDetectionStepOverlayState> _stepsKey =
-      GlobalKey<M7LivelynessDetectionStepOverlayState>();
+  final GlobalKey<M7LivelynessDetectionStepOverlayState> _stepsKey = GlobalKey<M7LivelynessDetectionStepOverlayState>();
   bool _isProcessingStep = false;
   bool _didCloseEyes = false;
   bool _isTakingPicture = false;
@@ -37,6 +35,13 @@ class _MLivelyness7DetectionScreenState
   bool _isCaptureButtonVisible = false;
 
   late final List<M7LivelynessStepItem> _steps;
+
+  final _orientations = {
+    DeviceOrientation.portraitUp: 0,
+    DeviceOrientation.landscapeLeft: 90,
+    DeviceOrientation.portraitDown: 180,
+    DeviceOrientation.landscapeRight: 270,
+  };
 
   //* MARK: - Life Cycle Methods
   //? =========================================================
@@ -76,14 +81,11 @@ class _MLivelyness7DetectionScreenState
   void _postFrameCallBack() async {
     availableCams = await availableCameras();
     if (availableCams.any(
-      (element) =>
-          element.lensDirection == CameraLensDirection.front &&
-          element.sensorOrientation == 90,
+      (element) => element.lensDirection == CameraLensDirection.front && element.sensorOrientation == 90,
     )) {
       _cameraIndex = availableCams.indexOf(
-        availableCams.firstWhere((element) =>
-            element.lensDirection == CameraLensDirection.front &&
-            element.sensorOrientation == 90),
+        availableCams
+            .firstWhere((element) => element.lensDirection == CameraLensDirection.front && element.sensorOrientation == 90),
       );
     } else {
       _cameraIndex = availableCams.indexOf(
@@ -137,6 +139,7 @@ class _MLivelyness7DetectionScreenState
       camera,
       ResolutionPreset.high,
       enableAudio: false,
+      imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.nv21 : ImageFormatGroup.bgra8888,
     );
     _cameraController?.initialize().then((_) {
       if (!mounted) {
@@ -148,51 +151,65 @@ class _MLivelyness7DetectionScreenState
     });
   }
 
-  Future<void> _processCameraImage(CameraImage cameraImage) async {
-    final WriteBuffer allBytes = WriteBuffer();
-    for (final Plane plane in cameraImage.planes) {
-      allBytes.putUint8List(plane.bytes);
-    }
-    final bytes = allBytes.done().buffer.asUint8List();
+  InputImage? _inputImageFromCameraImage(CameraImage image) {
+    if (_cameraController == null) return null;
 
-    final Size imageSize = Size(
-      cameraImage.width.toDouble(),
-      cameraImage.height.toDouble(),
-    );
-
+    // get image rotation
+    // it is used in android to convert the InputImage from Dart to Java: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/google_mlkit_commons/android/src/main/java/com/google_mlkit_commons/InputImageConverter.java
+    // `rotation` is not used in iOS to convert the InputImage from Dart to Obj-C: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/google_mlkit_commons/ios/Classes/MLKVisionImage%2BFlutterPlugin.m
+    // in both platforms `rotation` and `camera.lensDirection` can be used to compensate `x` and `y` coordinates on a canvas: https://github.com/flutter-ml/google_ml_kit_flutter/blob/master/packages/example/lib/vision_detector_views/painters/coordinates_translator.dart
     final camera = availableCams[_cameraIndex];
-    final imageRotation = InputImageRotationValue.fromRawValue(
-      camera.sensorOrientation,
+    final sensorOrientation = camera.sensorOrientation;
+    // print(
+    //     'lensDirection: ${camera.lensDirection}, sensorOrientation: $sensorOrientation, ${_controller?.value.deviceOrientation} ${_controller?.value.lockedCaptureOrientation} ${_controller?.value.isCaptureOrientationLocked}');
+    InputImageRotation? rotation;
+    if (Platform.isIOS) {
+      rotation = InputImageRotationValue.fromRawValue(sensorOrientation);
+    } else if (Platform.isAndroid) {
+      var rotationCompensation = _orientations[_cameraController!.value.deviceOrientation];
+      if (rotationCompensation == null) return null;
+      if (camera.lensDirection == CameraLensDirection.front) {
+        // front-facing
+        rotationCompensation = (sensorOrientation + rotationCompensation) % 360;
+      } else {
+        // back-facing
+        rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
+      }
+      rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
+      // print('rotationCompensation: $rotationCompensation');
+    }
+    if (rotation == null) return null;
+    // print('final rotation: $rotation');
+
+    // get image format
+    final format = InputImageFormatValue.fromRawValue(image.format.raw);
+    // validate format depending on platform
+    // only supported formats:
+    // * nv21 for Android
+    // * bgra8888 for iOS
+    if (format == null ||
+        (Platform.isAndroid && format != InputImageFormat.nv21) ||
+        (Platform.isIOS && format != InputImageFormat.bgra8888)) return null;
+
+    // since format is constraint to nv21 or bgra8888, both only have one plane
+    if (image.planes.length != 1) return null;
+    final plane = image.planes.first;
+
+    // compose InputImage using bytes
+    return InputImage.fromBytes(
+      bytes: plane.bytes,
+      metadata: InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: rotation, // used only in Android
+        format: format, // used only in iOS
+        bytesPerRow: plane.bytesPerRow, // used only in iOS
+      ),
     );
-    if (imageRotation == null) return;
+  }
 
-    final inputImageFormat = InputImageFormatValue.fromRawValue(
-      cameraImage.format.raw,
-    );
-    if (inputImageFormat == null) return;
-
-    final planeData = cameraImage.planes.map(
-      (Plane plane) {
-        return InputImagePlaneMetadata(
-          bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
-        );
-      },
-    ).toList();
-
-    final inputImageData = InputImageData(
-      size: imageSize,
-      imageRotation: imageRotation,
-      inputImageFormat: inputImageFormat,
-      planeData: planeData,
-    );
-
-    final inputImage = InputImage.fromBytes(
-      bytes: bytes,
-      inputImageData: inputImageData,
-    );
-
+  void _processCameraImage(CameraImage image) {
+    final inputImage = _inputImageFromCameraImage(image);
+    if (inputImage == null) return;
     _processImage(inputImage);
   }
 
@@ -203,17 +220,12 @@ class _MLivelyness7DetectionScreenState
     _isBusy = true;
     final faces = await M7MLHelper.instance.processInputImage(inputImage);
 
-    if (inputImage.inputImageData?.size != null &&
-        inputImage.inputImageData?.imageRotation != null) {
+    if (inputImage.metadata?.size != null && inputImage.metadata?.rotation != null) {
       if (faces.isEmpty) {
         _resetSteps();
       } else {
         final firstFace = faces.first;
-        final painter = M7FaceDetectorPainter(
-          firstFace,
-          inputImage.inputImageData!.size,
-          inputImage.inputImageData!.imageRotation,
-        );
+        final painter = M7FaceDetectorPainter(firstFace, inputImage.metadata!.size, inputImage.metadata!.rotation);
         _customPaint = CustomPaint(
           painter: painter,
           child: Container(
@@ -226,12 +238,9 @@ class _MLivelyness7DetectionScreenState
             ),
           ),
         );
-        if (_isProcessingStep &&
-            _steps[_stepsKey.currentState?.currentIndex ?? 0].step ==
-                M7LivelynessStep.blink) {
+        if (_isProcessingStep && _steps[_stepsKey.currentState?.currentIndex ?? 0].step == M7LivelynessStep.blink) {
           if (_didCloseEyes) {
-            if ((faces.first.leftEyeOpenProbability ?? 1.0) < 0.75 &&
-                (faces.first.rightEyeOpenProbability ?? 1.0) < 0.75) {
+            if ((faces.first.leftEyeOpenProbability ?? 1.0) < 0.75 && (faces.first.rightEyeOpenProbability ?? 1.0) < 0.75) {
               await _completeStep(
                 step: _steps[_stepsKey.currentState?.currentIndex ?? 0].step,
               );
@@ -344,14 +353,11 @@ class _MLivelyness7DetectionScreenState
     }
     switch (step) {
       case M7LivelynessStep.blink:
-        final M7BlinkDetectionThreshold? blinkThreshold =
-            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+        final M7BlinkDetectionThreshold? blinkThreshold = M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
           (p0) => p0 is M7BlinkDetectionThreshold,
         ) as M7BlinkDetectionThreshold?;
-        if ((face.leftEyeOpenProbability ?? 1.0) <
-                (blinkThreshold?.leftEyeProbability ?? 0.25) &&
-            (face.rightEyeOpenProbability ?? 1.0) <
-                (blinkThreshold?.rightEyeProbability ?? 0.25)) {
+        if ((face.leftEyeOpenProbability ?? 1.0) < (blinkThreshold?.leftEyeProbability ?? 0.25) &&
+            (face.rightEyeOpenProbability ?? 1.0) < (blinkThreshold?.rightEyeProbability ?? 0.25)) {
           _startProcessing();
           if (mounted) {
             setState(
@@ -361,34 +367,28 @@ class _MLivelyness7DetectionScreenState
         }
         break;
       case M7LivelynessStep.turnLeft:
-        final M7HeadTurnDetectionThreshold? headTurnThreshold =
-            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+        final M7HeadTurnDetectionThreshold? headTurnThreshold = M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
           (p0) => p0 is M7HeadTurnDetectionThreshold,
         ) as M7HeadTurnDetectionThreshold?;
-        if ((face.headEulerAngleY ?? 0) >
-            (headTurnThreshold?.rotationAngle ?? 45)) {
+        if ((face.headEulerAngleY ?? 0) > (headTurnThreshold?.rotationAngle ?? 45)) {
           _startProcessing();
           await _completeStep(step: step);
         }
         break;
       case M7LivelynessStep.turnRight:
-        final M7HeadTurnDetectionThreshold? headTurnThreshold =
-            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+        final M7HeadTurnDetectionThreshold? headTurnThreshold = M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
           (p0) => p0 is M7HeadTurnDetectionThreshold,
         ) as M7HeadTurnDetectionThreshold?;
-        if ((face.headEulerAngleY ?? 0) >
-            (headTurnThreshold?.rotationAngle ?? -50)) {
+        if ((face.headEulerAngleY ?? 0) > (headTurnThreshold?.rotationAngle ?? -50)) {
           _startProcessing();
           await _completeStep(step: step);
         }
         break;
       case M7LivelynessStep.smile:
-        final M7SmileDetectionThreshold? smileThreshold =
-            M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
+        final M7SmileDetectionThreshold? smileThreshold = M7LivelynessDetection.instance.thresholdConfig.firstWhereOrNull(
           (p0) => p0 is M7SmileDetectionThreshold,
         ) as M7SmileDetectionThreshold?;
-        if ((face.smilingProbability ?? 0) >
-            (smileThreshold?.probability ?? 0.75)) {
+        if ((face.smilingProbability ?? 0) > (smileThreshold?.probability ?? 0.75)) {
           _startProcessing();
           await _completeStep(step: step);
         }
@@ -441,8 +441,7 @@ class _MLivelyness7DetectionScreenState
   }
 
   Widget _buildDetectionBody() {
-    if (_cameraController == null ||
-        _cameraController?.value.isInitialized == false) {
+    if (_cameraController == null || _cameraController?.value.isInitialized == false) {
       return const Center(
         child: CircularProgressIndicator.adaptive(),
       );
@@ -492,8 +491,7 @@ class _MLivelyness7DetectionScreenState
               ),
               MaterialButton(
                 onPressed: () => _takePicture(),
-                color: widget.config.captureButtonColor ??
-                    Theme.of(context).primaryColor,
+                color: widget.config.captureButtonColor ?? Theme.of(context).primaryColor,
                 textColor: Colors.white,
                 padding: const EdgeInsets.all(16),
                 shape: const CircleBorder(),
